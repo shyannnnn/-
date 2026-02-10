@@ -7,11 +7,18 @@
   <style>
     :root { --bg1:#ffdde1; --bg2:#ee9ca7; --card:#ffffffcc; --text:#2b2b2b; }
     * { box-sizing: border-box; font-family: system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif; }
-    body {
-      margin: 0; min-height: 100vh; display: grid; place-items: center;
+
+    body{
+      margin: 0;
+      min-height: 100vh;
+      display: grid;
+      place-items: center;
       background: radial-gradient(circle at top, var(--bg1), var(--bg2));
-      color: var(--text); overflow: hidden;
+      color: var(--text);
+      overflow: hidden;
+      padding: 16px;
     }
+
     .card{
       width: min(520px, 92vw);
       background: var(--card);
@@ -22,21 +29,37 @@
       text-align: center;
       box-shadow: 0 18px 60px rgba(0,0,0,.15);
       position: relative;
+      z-index: 2;
     }
+
     h1 { margin: 0 0 10px; font-size: 32px; }
-    p { margin: 0 0 20px; font-size: 16px; opacity: .9; }
-    .buttons { display: flex; gap: 12px; justify-content: center; margin-top: 14px; flex-wrap: wrap; }
+
+    .buttons{
+      display: flex;
+      gap: 12px;
+      justify-content: center;
+      margin-top: 14px;
+      flex-wrap: wrap;
+    }
+
     button{
-      border: 0; border-radius: 999px; padding: 12px 18px; font-size: 16px;
-      cursor: pointer; transition: transform .08s ease, box-shadow .15s ease;
+      border: 0;
+      border-radius: 999px;
+      padding: 12px 18px;
+      font-size: 16px;
+      cursor: pointer;
+      transition: transform .08s ease, box-shadow .15s ease;
       box-shadow: 0 10px 24px rgba(0,0,0,.12);
       user-select: none;
     }
     button:active { transform: scale(.98); }
+
     #yes { background: #ff3b6f; color: white; }
     #no  { background: white; color: #ff3b6f; border: 2px solid #ff3b6f; }
+
     .hidden { display: none; }
-    .big {
+
+    .big{
       font-size: 22px;
       line-height: 1.4;
       padding: 18px 16px;
@@ -45,20 +68,53 @@
       border: 1px solid #00000010;
       margin-top: 16px;
     }
-    .heart {
+
+    #subtitle{
+      margin: 10px 0 0;
+      font-size: 16px;
+      opacity: .9;
+    }
+
+    .heart{
       position: absolute;
       font-size: 18px;
       opacity: .45;
       animation: floatUp 6s linear infinite;
+      z-index: 1;
     }
-    @keyframes floatUp {
+
+    @keyframes floatUp{
       from { transform: translateY(40px); opacity: 0; }
       10% { opacity: .55; }
       to { transform: translateY(-640px); opacity: 0; }
     }
-    canvas { position: fixed; inset: 0; pointer-events: none; }
+
+    canvas { position: fixed; inset: 0; pointer-events: none; z-index: 0; }
+
+    /* ✅ Gallery styling so photos don't blow up */
+    .gallery{
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 10px;
+      margin-top: 14px;
+    }
+
+    .gallery img{
+      width: 100%;
+      height: 160px;
+      object-fit: cover;
+      border-radius: 14px;
+      display: block;
+      box-shadow: 0 8px 20px rgba(0,0,0,0.2);
+    }
+
+    @media (max-width: 420px){
+      .gallery{ grid-template-columns: repeat(3, 1fr); }
+      .gallery img{ height: 115px; }
+    }
   </style>
 </head>
+
 <body>
   <canvas id="confetti"></canvas>
 
@@ -67,44 +123,45 @@
 
     <div class="big" id="question">
       Will you be my Valentine? 🌹
+      <p id="subtitle">see if you dare to say no or not</p>
     </div>
-
-    <p id="subtitle">see if you dare to say no or not </p>
 
     <div class="buttons" id="btnRow">
       <button id="yes">Yes 💘</button>
       <button id="no">No 🙈</button>
     </div>
 
+    <!-- ✅ This stays hidden until YES is clicked -->
     <div class="big hidden" id="answer">
-  i fr love you so much hehehehe 😘💞 <br/>
-  hopefully you like your cs boyfriend more now <br/>
-  <span style="font-size:14px; opacity:.8;">(little montage 😆)</span>
+      i fr love you so much hehehehe 😘💞 <br/>
+      hopefully you like your cs boyfriend more now <br/>
+      <span style="font-size:14px; opacity:.8;">(little montage 😆)</span>
 
-  <div class="gallery">
-    <img src="IMG_2370.jpeg" alt="Us 1">
-    <img src="IMG_6680.jpeg" alt="Us 2">
-    <img src="IMG_9886.jpeg" alt="Us 3">
-    <img src="IMG_6831.jpeg" alt="Us 4">
-    <img src="IMG_9159.jpeg" alt="Us 5">
-    <img src="IMG_6653.jpeg" alt="Us 6">
+      <div class="gallery">
+        <img src="IMG_2370.jpeg" alt="Us 1">
+        <img src="IMG_6680.jpeg" alt="Us 2">
+        <img src="IMG_9886.jpeg" alt="Us 3">
+        <img src="IMG_6831.jpeg" alt="Us 4">
+        <img src="IMG_9159.jpeg" alt="Us 5">
+        <img src="IMG_6653.jpeg" alt="Us 6">
+      </div>
+
+      <div style="font-size:14px; margin-top:15px; opacity:.8;">
+        Can't wait to make more memories with you 💌
+      </div>
+    </div>
   </div>
-
-  <div style="font-size:14px; margin-top:15px; opacity:.8;">
-    Can't wait to make more memories with you 💌
-  </div>
-</div>
-
 
   <script>
+    // ✅ Customize
     const gfName = "ALISON CHEW YU HUI";
     const fromName = "mystery man";
-    const extraLine = "Dinner on me. 7pm? 😉";
+    const extraLine = "Dinner on me. 7pm? 😉"; // can be ""
 
     document.getElementById("name").textContent = gfName;
     document.title = "💌 For " + gfName;
 
-    // floating hearts in background
+    // floating hearts
     function spawnHeart() {
       const heart = document.createElement("div");
       heart.className = "heart";
@@ -117,32 +174,38 @@
     }
     setInterval(spawnHeart, 400);
 
-    // playful "No" button dodge
+    // "No" button dodge
     const noBtn = document.getElementById("no");
     let dodges = 0;
     function dodge() {
       dodges++;
-      const x = (Math.random() * 70) - 35;  // -35..35
-      const y = (Math.random() * 40) - 20;  // -20..20
+      const x = (Math.random() * 70) - 35;
+      const y = (Math.random() * 40) - 20;
       noBtn.style.transform = `translate(${x}vw, ${y}vh)`;
       if (dodges > 6) noBtn.textContent = "Okay fine 😭";
     }
     noBtn.addEventListener("mouseenter", dodge);
     noBtn.addEventListener("click", dodge);
 
-    // yes -> show message + confetti
+    // YES -> show montage + confetti
     const yesBtn = document.getElementById("yes");
     const btnRow = document.getElementById("btnRow");
     const answer = document.getElementById("answer");
     const question = document.getElementById("question");
+
     yesBtn.addEventListener("click", () => {
       btnRow.classList.add("hidden");
       answer.classList.remove("hidden");
-      question.innerHTML = `Will you be my Valentine? 🌹<br><span style="font-size:14px; opacity:.85;">From: ${fromName} — ${extraLine}</span>`;
+
+      const extra = extraLine ? ` — ${extraLine}` : "";
+      question.innerHTML =
+        `Will you be my Valentine? 🌹<br>` +
+        `<span style="font-size:14px; opacity:.85;">From: ${fromName}${extra}</span>`;
+
       startConfetti();
     });
 
-    // simple confetti
+    // confetti
     const canvas = document.getElementById("confetti");
     const ctx = canvas.getContext("2d");
     function resize() { canvas.width = innerWidth; canvas.height = innerHeight; }
@@ -150,7 +213,7 @@
 
     let confettiPieces = [];
     function startConfetti() {
-      confettiPieces = Array.from({length: 180}, () => ({
+      confettiPieces = Array.from({ length: 180 }, () => ({
         x: Math.random() * canvas.width,
         y: -20 - Math.random() * canvas.height,
         r: 3 + Math.random() * 4,
@@ -162,15 +225,16 @@
       requestAnimationFrame(tick);
       setTimeout(() => confettiPieces = [], 6000);
     }
+
     function tick() {
-      ctx.clearRect(0,0,canvas.width,canvas.height);
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
       for (const p of confettiPieces) {
         p.x += p.vx; p.y += p.vy; p.rot += p.vr;
         if (p.y > canvas.height + 30) p.y = -30;
         ctx.save();
         ctx.translate(p.x, p.y);
         ctx.rotate(p.rot);
-        ctx.fillRect(-p.r, -p.r, p.r*2, p.r*2);
+        ctx.fillRect(-p.r, -p.r, p.r * 2, p.r * 2);
         ctx.restore();
       }
       if (confettiPieces.length) requestAnimationFrame(tick);
