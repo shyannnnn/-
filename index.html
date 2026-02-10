@@ -1,0 +1,168 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>💌 For You</title>
+  <style>
+    :root { --bg1:#ffdde1; --bg2:#ee9ca7; --card:#ffffffcc; --text:#2b2b2b; }
+    * { box-sizing: border-box; font-family: system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif; }
+    body {
+      margin: 0; min-height: 100vh; display: grid; place-items: center;
+      background: radial-gradient(circle at top, var(--bg1), var(--bg2));
+      color: var(--text); overflow: hidden;
+    }
+    .card{
+      width: min(520px, 92vw);
+      background: var(--card);
+      backdrop-filter: blur(10px);
+      border: 1px solid #ffffff80;
+      border-radius: 24px;
+      padding: 28px;
+      text-align: center;
+      box-shadow: 0 18px 60px rgba(0,0,0,.15);
+      position: relative;
+    }
+    h1 { margin: 0 0 10px; font-size: 32px; }
+    p { margin: 0 0 20px; font-size: 16px; opacity: .9; }
+    .buttons { display: flex; gap: 12px; justify-content: center; margin-top: 14px; flex-wrap: wrap; }
+    button{
+      border: 0; border-radius: 999px; padding: 12px 18px; font-size: 16px;
+      cursor: pointer; transition: transform .08s ease, box-shadow .15s ease;
+      box-shadow: 0 10px 24px rgba(0,0,0,.12);
+      user-select: none;
+    }
+    button:active { transform: scale(.98); }
+    #yes { background: #ff3b6f; color: white; }
+    #no  { background: white; color: #ff3b6f; border: 2px solid #ff3b6f; }
+    .hidden { display: none; }
+    .big {
+      font-size: 22px;
+      line-height: 1.4;
+      padding: 18px 16px;
+      border-radius: 18px;
+      background: #fff;
+      border: 1px solid #00000010;
+      margin-top: 16px;
+    }
+    .heart {
+      position: absolute;
+      font-size: 18px;
+      opacity: .45;
+      animation: floatUp 6s linear infinite;
+    }
+    @keyframes floatUp {
+      from { transform: translateY(40px); opacity: 0; }
+      10% { opacity: .55; }
+      to { transform: translateY(-640px); opacity: 0; }
+    }
+    canvas { position: fixed; inset: 0; pointer-events: none; }
+  </style>
+</head>
+<body>
+  <canvas id="confetti"></canvas>
+
+  <div class="card">
+    <h1 id="title">Hey <span id="name">my love</span> 💖</h1>
+    <p id="subtitle">I have one very important question…</p>
+
+    <div class="big" id="question">
+      Will you be my Valentine? 🌹
+    </div>
+
+    <div class="buttons" id="btnRow">
+      <button id="yes">Yes 💘</button>
+      <button id="no">No 🙈</button>
+    </div>
+
+    <div class="big hidden" id="answer">
+      YAYYY!!! 😭💞 <br/>
+      You just made me the happiest person. <br/>
+      <span style="font-size:14px; opacity:.8;">(Screenshot this so I can keep it forever 😌)</span>
+    </div>
+  </div>
+
+  <script>
+    // ====== Customize these 3 lines ======
+    const gfName = "Your Girlfriend's Name";
+    const fromName = "Your Name";
+    const extraLine = "Dinner on me. 7pm? 😉";
+    // ====================================
+
+    document.getElementById("name").textContent = gfName;
+    document.title = "💌 For " + gfName;
+
+    // floating hearts in background
+    function spawnHeart() {
+      const heart = document.createElement("div");
+      heart.className = "heart";
+      heart.textContent = Math.random() > 0.5 ? "💗" : "💞";
+      heart.style.left = Math.random() * 100 + "vw";
+      heart.style.top = "100vh";
+      heart.style.animationDuration = (4 + Math.random() * 4) + "s";
+      document.body.appendChild(heart);
+      setTimeout(() => heart.remove(), 8000);
+    }
+    setInterval(spawnHeart, 400);
+
+    // playful "No" button dodge
+    const noBtn = document.getElementById("no");
+    let dodges = 0;
+    function dodge() {
+      dodges++;
+      const x = (Math.random() * 70) - 35;  // -35..35
+      const y = (Math.random() * 40) - 20;  // -20..20
+      noBtn.style.transform = `translate(${x}vw, ${y}vh)`;
+      if (dodges > 6) noBtn.textContent = "Okay fine 😭";
+    }
+    noBtn.addEventListener("mouseenter", dodge);
+    noBtn.addEventListener("click", dodge);
+
+    // yes -> show message + confetti
+    const yesBtn = document.getElementById("yes");
+    const btnRow = document.getElementById("btnRow");
+    const answer = document.getElementById("answer");
+    const question = document.getElementById("question");
+    yesBtn.addEventListener("click", () => {
+      btnRow.classList.add("hidden");
+      answer.classList.remove("hidden");
+      question.innerHTML = `Will you be my Valentine? 🌹<br><span style="font-size:14px; opacity:.85;">From: ${fromName} — ${extraLine}</span>`;
+      startConfetti();
+    });
+
+    // simple confetti
+    const canvas = document.getElementById("confetti");
+    const ctx = canvas.getContext("2d");
+    function resize() { canvas.width = innerWidth; canvas.height = innerHeight; }
+    addEventListener("resize", resize); resize();
+
+    let confettiPieces = [];
+    function startConfetti() {
+      confettiPieces = Array.from({length: 180}, () => ({
+        x: Math.random() * canvas.width,
+        y: -20 - Math.random() * canvas.height,
+        r: 3 + Math.random() * 4,
+        vx: -2 + Math.random() * 4,
+        vy: 2 + Math.random() * 5,
+        rot: Math.random() * Math.PI,
+        vr: -0.2 + Math.random() * 0.4
+      }));
+      requestAnimationFrame(tick);
+      setTimeout(() => confettiPieces = [], 6000);
+    }
+    function tick() {
+      ctx.clearRect(0,0,canvas.width,canvas.height);
+      for (const p of confettiPieces) {
+        p.x += p.vx; p.y += p.vy; p.rot += p.vr;
+        if (p.y > canvas.height + 30) p.y = -30;
+        ctx.save();
+        ctx.translate(p.x, p.y);
+        ctx.rotate(p.rot);
+        ctx.fillRect(-p.r, -p.r, p.r*2, p.r*2);
+        ctx.restore();
+      }
+      if (confettiPieces.length) requestAnimationFrame(tick);
+    }
+  </script>
+</body>
+</html>
